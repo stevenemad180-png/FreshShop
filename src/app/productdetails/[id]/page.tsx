@@ -1,21 +1,17 @@
 import { GetDetailsSingleProduct } from "@/api/serves/route";
-import { ProductType } from "@/api/Types";
 import ProductdetailsLayout from "@/app/_Components/ProductdetailsLayout/ProductdetailsLayout";
-import Image from "next/image";
-import { FaStar } from "react-icons/fa";
+import { notFound } from "next/navigation";
 
-export default async function ProductDetails(props: { params: Promise<{ id: string }> }):Promise<ProductType | undefined>
-{
+export default async function ProductDetails({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const product = await GetDetailsSingleProduct(params.id);
 
-  const params =props.params
-  const id = (await params).id;
+  if (!product) {
+    notFound();
+  }
 
-  const product = await GetDetailsSingleProduct(id);
-  console.log("Product ID:", id);
-
-
-  
-  return(
-    <ProductdetailsLayout product={product}/>
-  )
+  return <ProductdetailsLayout product={product} />;
 }
