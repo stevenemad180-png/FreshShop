@@ -1,13 +1,12 @@
+import { notFound } from "next/navigation";
 import { GetDetailsSingleProduct } from "@/api/serves/route";
 import ProductdetailsLayout from "@/app/_Components/ProductdetailsLayout/ProductdetailsLayout";
-import { notFound } from "next/navigation";
 
-export default async function ProductDetails({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const product = await GetDetailsSingleProduct(params.id);
+export default async function Page(
+  props: PageProps<"/productdetails/[id]">
+) {
+  const { id } = await props.params;
+  const product = await GetDetailsSingleProduct(id);
 
   if (!product) {
     notFound();
