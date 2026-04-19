@@ -92,14 +92,14 @@ export interface CartProduct {
 
 
 export interface cashorder{
-  {
+  
     shippingAddress: {
       details: string;
       phone: string;
       city: string;
       postalCode ?: string;
     }
-  }
+  
 }
 export interface WishlistResponse {
   status: string
