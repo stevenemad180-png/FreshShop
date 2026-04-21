@@ -15,7 +15,7 @@ export default function HandleButtonClear() {
       console.log('rssssssss', res)
 
       if (res) {
-        setnumberofcart(res.numOfCartItems)
+        setnumberofcart((res as { numOfCartItems?: number }).numOfCartItems ?? 0)
         toast.success('clear Cart successfully')
       }
     } catch (error) {

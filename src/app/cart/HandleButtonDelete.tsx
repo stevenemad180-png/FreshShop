@@ -22,7 +22,7 @@ export default function HandleButtonDelete({ id }: HandleButtonDeleteProps) {
       const res = await Handledelete(id)
 
       if (res) {
-        setnumberofcart(res.numOfCartItems)
+        setnumberofcart((res as { numOfCartItems?: number }).numOfCartItems ?? 0)
         toast.success('Removed successfully')
       }
     } catch (error) {

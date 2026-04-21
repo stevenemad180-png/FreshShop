@@ -33,7 +33,7 @@ export default function UpdateCount({
             const res = await HandleUpdate(id, newcount)
 
             if (res) {
-                setnumberofcart(res.numOfCartItems)
+                setnumberofcart((res as { numOfCartItems?: number }).numOfCartItems ?? 0)
 
                 toast.success(
                     Isincrement
