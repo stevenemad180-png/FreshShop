@@ -40,7 +40,7 @@ export default function HandleAddCard({
       const res = await Addproduct(id);
 
       if (res) {
-        setnumberofcart(res.numOfCartItems);
+        setnumberofcart(res.numOfCartItems ?? 0);
         toast.success("Added to cart ✅");
       }
     } catch (error: any) {

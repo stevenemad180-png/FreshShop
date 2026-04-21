@@ -16,6 +16,11 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"]
 export const metadata: Metadata = {
   title: "FreshCart",
   description: "Modern Grocery Store",
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
