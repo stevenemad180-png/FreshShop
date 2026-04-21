@@ -68,7 +68,7 @@ export default function CheckoutComponent() {
       setIsLoading(false);
     }
   }
-
+//
   return (
     <section className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-green-100 p-6 flex justify-center items-start">
       <div className="max-w-2xl w-full bg-white p-8 rounded-3xl shadow-xl">
