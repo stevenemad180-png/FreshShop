@@ -19,6 +19,7 @@ export default function ProductCard({ product }: { product: ProductType }) {
     : 0;
 
   const rating = Math.round(product.ratingsAverage || 0);
+
   return (
     <div className="group relative overflow-hidden rounded-[30px] border border-slate-200/70 bg-white p-4 shadow-[0_12px_35px_rgba(15,23,42,0.06)] transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_22px_65px_rgba(15,23,42,0.12)]">
       {hasDiscount && (
@@ -28,9 +29,14 @@ export default function ProductCard({ product }: { product: ProductType }) {
       )}
 
       <div className="absolute right-4 top-4 z-30 flex translate-x-3 flex-col gap-2 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100">
-        <HandleAddWishlist id={ product._id }/>
+        <HandleAddWishlist id={product._id}>
+          <Heart className="h-[18px] w-[18px] fill-current" />
+        </HandleAddWishlist>
 
-        <button className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white/95 text-slate-600 shadow-sm backdrop-blur transition hover:scale-105 hover:text-emerald-600">
+        <button
+          type="button"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white/95 text-slate-600 shadow-sm backdrop-blur transition hover:scale-105 hover:text-emerald-600"
+        >
           <Repeat2 size={17} />
         </button>
 

@@ -1,5 +1,4 @@
 import { GETCART } from "@/api/serves/route";
-import { CartResponse } from "@/api/Types";
 import Image from "next/image";
 import Link from "next/link";
 import HandleButtonDelete from "./HandleButtonDelete";
@@ -7,9 +6,40 @@ import HandleButtonClear from "./HandleClearButton";
 import UpdateCount from "./UpdateCount";
 
 export default async function Page() {
-  const cart: CartResponse = await GETCART();
-  const products = cart?.data?.products || [];
-  const cartid=cart.cartId
+  const cart = await GETCART();
+
+  if (!cart || !cart.data) {
+    return (
+      <section className="min-h-screen bg-gradient-to-b from-white via-zinc-50 to-zinc-100 px-4 py-16">
+        <div className="mx-auto max-w-3xl">
+          <div className="rounded-[32px] border border-zinc-200/70 bg-white/90 p-10 text-center shadow-[0_20px_70px_rgba(0,0,0,0.08)] backdrop-blur">
+            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-zinc-100 text-3xl">
+              🛒
+            </div>
+
+            <h1 className="text-3xl font-bold tracking-tight text-zinc-900 md:text-4xl">
+              Your cart is empty
+            </h1>
+
+            <p className="mt-3 text-base leading-7 text-zinc-500">
+              Looks like you haven’t added anything yet. Start exploring and add
+              your favorite products.
+            </p>
+
+            <Link
+              href="/"
+              className="mt-8 inline-flex items-center justify-center rounded-2xl bg-zinc-900 px-7 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-zinc-800"
+            >
+              Continue Shopping
+            </Link>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  const products = cart.data.products || [];
+  const cartid = cart.cartId;
 
   if (!products.length) {
     return (
@@ -142,11 +172,15 @@ export default async function Page() {
 
                       <div className="mt-5 flex flex-col gap-4 border-t border-zinc-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
                         <div className="inline-flex w-fit items-center rounded-2xl border border-zinc-200 bg-zinc-50 p-1.5 shadow-sm">
-                          <UpdateCount id={ item.product._id} newcount={ item.count -1} />
+                          <UpdateCount id={item.product._id} newcount={item.count - 1} />
                           <span className="flex min-w-[48px] items-center justify-center text-base font-bold text-zinc-900">
                             {item.count}
                           </span>
-                          <UpdateCount Isincrement id={item.product._id} newcount={ item.count + 1} />
+                          <UpdateCount
+                            Isincrement
+                            id={item.product._id}
+                            newcount={item.count + 1}
+                          />
                         </div>
 
                         <div className="flex flex-wrap items-center gap-3">
@@ -205,11 +239,12 @@ export default async function Page() {
                 {cart.data.totalCartPrice} EGP
               </p>
             </div>
+
             <Link href={`/cart/${cartid}`}>
-            <button className="mt-6 w-full rounded-2xl bg-white px-5 py-4 text-sm font-bold text-zinc-900 transition hover:-translate-y-0.5 hover:bg-zinc-200">
-              Proceed to Checkout
+              <button className="mt-6 w-full rounded-2xl bg-white px-5 py-4 text-sm font-bold text-zinc-900 transition hover:-translate-y-0.5 hover:bg-zinc-200">
+                Proceed to Checkout
               </button>
-              </Link>
+            </Link>
 
             <Link
               href="/"

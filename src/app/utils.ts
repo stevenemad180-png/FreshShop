@@ -1,28 +1,46 @@
-'use server'
+import { cookies } from "next/headers";
+import { decode } from "next-auth/jwt";
 
-import { decode } from 'next-auth/jwt'
-import { cookies } from 'next/headers'
+type AppJwt = {
+  id?: string;
+  usertoken?: string;
+};
 
-export async function decodetoken(): Promise<string> {
-  const cookieStore = await cookies()
+export async function decodetoken(): Promise<string | undefined> {
+  const cookieStore = await cookies();
 
-  const nextauthToken =
-    cookieStore.get('authjs.session-token')?.value ||
-    cookieStore.get('__Secure-authjs.session-token')?.value
+  const secureAuthjsToken = cookieStore.get("__Secure-authjs.session-token")?.value;
+  const authjsToken = cookieStore.get("authjs.session-token")?.value;
+  const secureNextAuthToken = cookieStore.get("__Secure-next-auth.session-token")?.value;
+  const nextAuthToken = cookieStore.get("next-auth.session-token")?.value;
 
-  if (!nextauthToken) {
-    throw new Error('No auth token found')
+  const sessionToken =
+    secureAuthjsToken ||
+    authjsToken ||
+    secureNextAuthToken ||
+    nextAuthToken;
+
+  const salt = secureAuthjsToken
+    ? "__Secure-authjs.session-token"
+    : authjsToken
+    ? "authjs.session-token"
+    : secureNextAuthToken
+    ? "__Secure-next-auth.session-token"
+    : nextAuthToken
+    ? "next-auth.session-token"
+    : undefined;
+
+  if (!sessionToken || !salt) {
+    return undefined;
   }
 
-  const jwtdecode = await decode({
+  const jwtdecode = await decode<AppJwt>({
+    token: sessionToken,
     secret: process.env.NEXTAUTH_SECRET!,
-    token: nextauthToken,
-    salt: 'authjs.session-token',
-  })
+    salt,
+  });
 
-  if (!jwtdecode?.usertoken) {
-    throw new Error('Invalid token payload')
-  }
-
-  return jwtdecode.usertoken as string
+  return typeof jwtdecode?.usertoken === "string"
+    ? jwtdecode.usertoken
+    : undefined;
 }

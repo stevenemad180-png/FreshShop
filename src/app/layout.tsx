@@ -8,6 +8,7 @@ import SessionProviderwell from "./_Components/sessionprovider/SessionProviderwe
 import Providercart from "@/_provider/Providercart";
 import { GETCART, GETWISHLIST } from "@/api/serves/route";
 import { CartResponse, WishlistResponse } from "@/api/Types";
+import Footer from "./_Components/Footer/Footer";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
@@ -30,6 +31,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <Mynav />
             <Toaster richColors position="top-center" />
             {children}
+            <Footer/>   
           </SessionProviderwell>
         </Providercart>
       </body>

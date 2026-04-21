@@ -1,91 +1,91 @@
-import { signIn } from 'next-auth/react';
-import type { NextAuthConfig } from "next-auth"
-import Credentials from "next-auth/providers/credentials"
-import { jwtDecode} from 'jwt-decode'
+import type { NextAuthConfig } from "next-auth";
+import Credentials from "next-auth/providers/credentials";
+import { jwtDecode } from "jwt-decode";
+
+type DecodedToken = {
+  id: string;
+};
+
 export const authConfig: NextAuthConfig = {
+  session: {
+    strategy: "jwt",
+  },
+
   providers: [
     Credentials({
       name: "fresh",
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
-        
       },
-      async authorize(credentials) {
-        const res = await fetch("https://ecommerce.routemisr.com/api/v1/auth/signin", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-          
-            email: credentials?.email,
-            password: credentials?.password,
-          }),
-         
-        })
 
-        const finalres = await res.json()
-        console.log("signin response", finalres)
-        if (res.ok)
-        {
-          
-          const { name, email } = finalres.user
-          const data:{id:string}=jwtDecode(finalres.token)
-          return {
-            name,
-            email,
-            id: data.id,
-           tokennext: finalres.token,
+      async authorize(credentials) {
+        try {
+          if (!credentials?.email || !credentials?.password) {
+            return null;
           }
 
+          const res = await fetch(
+            "https://ecommerce.routemisr.com/api/v1/auth/signin",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                email: credentials.email,
+                password: credentials.password,
+              }),
+            }
+          );
+
+          const finalres = await res.json();
+          console.log("signin response", finalres);
+
+          if (!res.ok || !finalres?.token || !finalres?.user) {
+            return null;
+          }
+
+          const decoded = jwtDecode<DecodedToken>(finalres.token);
+
+          return {
+            id: decoded.id,
+            name: finalres.user.name,
+            email: finalres.user.email,
+            usertoken: finalres.token,
+          };
+        } catch (error) {
+          console.error("authorize error:", error);
+          return null;
         }
-
-
-        
       },
-      
     }),
-    
   ],
+
   callbacks: {
-
-    // signIn - refresh ----getseetion
-    jwt: function (param)
-    {
-      if (param.user) {
-        console.log('jwparambefore',param)
-        param.token.usertoken = param.user.tokennext;
-        param.token.id = param.user.id
-                console.log('jwparam',param)
-
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.usertoken = (user as { usertoken?: string }).usertoken;
       }
-      return param.token
-
-
-
-
-
-
-    },
-    //if user aurhcaited or no  => client side
-    //use session .....api/auth/session    .... getserver session
-    //edit obj add id 
-    session: function (param) {
-             console.log('param session before', param)
-
-      param.session.user.id=param.token.id
-      console.log('param session', param)
-      
-      return param.session
-      
-    },
-},
-
- 
-    pages: {
-      signIn: "/login",
+      return token;
     },
 
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id as string;
+      }
 
-}
+      (session as typeof session & { usertoken?: string }).usertoken =
+        token.usertoken as string | undefined;
+
+      return session;
+    },
+  },
+
+  pages: {
+    signIn: "/login",
+  },
+
+  debug: true,
+};
