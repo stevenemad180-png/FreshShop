@@ -1,5 +1,5 @@
 import { decodetoken } from "@/app/utils"
-import { CartResponse, CategoryType, ProductType, wishlistRepone } from "../Types"
+import { CartResponse, CategoryType, ProductType, WishlistResponse } from "../Types"
 import { revalidatePath } from "next/cache"
 
 export async function getallproduct(): Promise<ProductType[] | undefined> {

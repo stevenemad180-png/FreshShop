@@ -37,12 +37,17 @@ export interface CategoryType {
   image: string;
 }
 
+
 export interface BrandType {
-  _id: string;
-  name: string;
-  slug: string;
-  image: string;
+  _id: string
+  name: string
+  slug: string
+  image: string
+  createdAt?: string
+  updatedAt?: string
 }
+
+
 
 export interface ReviewUserType {
   _id: string;
@@ -107,11 +112,3 @@ export interface WishlistResponse {
   data: ProductType[]
 }
 
-export interface BrandType {
-  _id: string
-  name: string
-  slug: string
-  image: string
-  createdAt: string
-  updatedAt: string
-}
