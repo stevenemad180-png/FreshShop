@@ -3,7 +3,10 @@
 import React, { useState } from "react";
 import { toast } from "sonner";
 import { useRouter, useParams } from "next/navigation";
-import { createOnlineOrderAction, HandleCash } from "@/app/_Components/CartAction/CartAction";
+import {
+  createOnlineOrderAction,
+  HandleCash,
+} from "@/app/_Components/CartAction/CartAction";
 import { usecart } from "@/_provider/Providercart";
 
 export default function CheckoutComponent() {
@@ -54,8 +57,14 @@ export default function CheckoutComponent() {
           shippingAddress: form,
         });
 
+        const checkoutUrl = session?.session?.url;
+
+        if (!checkoutUrl) {
+          throw new Error("Payment session URL not found");
+        }
+
         toast.success("Redirecting to payment ✅");
-        window.location.href = session.session.url;
+        window.location.href = checkoutUrl;
       } else {
         await HandleCash(cartId, { shippingAddress: form });
         toast.success("Order placed successfully ✅");
@@ -68,7 +77,7 @@ export default function CheckoutComponent() {
       setIsLoading(false);
     }
   }
-//
+
   return (
     <section className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-green-100 p-6 flex justify-center items-start">
       <div className="max-w-2xl w-full bg-white p-8 rounded-3xl shadow-xl">
