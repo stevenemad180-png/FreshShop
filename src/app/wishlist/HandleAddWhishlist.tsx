@@ -40,7 +40,7 @@ export default function HandleAddWishlist({
       const res = await AddWishlist(id);
 
       if (res) {
-        setnumberofWhishlist(res.data.length);
+        setnumberofWhishlist(res.data?.length ?? 0);
         toast.success("Added to wishlist ✅");
       }
     } catch (error: any) {
