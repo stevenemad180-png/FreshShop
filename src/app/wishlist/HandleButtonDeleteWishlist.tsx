@@ -14,8 +14,7 @@ const {numberofcart, setnumberofcart, numberofWhishlist, setnumberofWhishlist }=
      const res= await HandledeleteWishlist(id);
         toast.success("Removed from wishlist ✅");
         console.log('deleteeeeee',res) 
-        setnumberofWhishlist(res.count)
-        
+setnumberofWhishlist((res as { count?: number }).count ?? 0)        
     } catch (err) {
       console.error(err);
       toast.error("Failed to remove item ❌");
