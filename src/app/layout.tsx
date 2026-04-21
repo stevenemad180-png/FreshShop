@@ -24,9 +24,8 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const cart: CartResponse = await GETCART();
-  const wishlist: WishlistResponse = await GETWISHLIST();
-
+const cart = await GETCART();
+const wishlist = await GETWISHLIST();
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
