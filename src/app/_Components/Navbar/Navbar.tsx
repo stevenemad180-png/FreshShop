@@ -6,8 +6,8 @@ import {
   Menu, X, Search, Heart, ShoppingCart, User, ChevronDown, LogOut, LayoutGrid, Store, House
 } from "lucide-react"
 import { signIn, signOut, useSession } from "next-auth/react"
-import { ContextCart } from "@/_provider/Providercart"
 import { useRouter } from "next/navigation"
+import { usecart } from "@/_provider/Providercart"
 
 const navLinks = [
   { name: "Home", href: "/", icon: <House size={18} /> },
@@ -17,7 +17,7 @@ const navLinks = [
 ]
 
 export default function NavbarFull() {
-  const { numberofcart, numberofWhishlist } = useContext(ContextCart)
+const{numberofcart, numberofWhishlist}=usecart()
   const { status, data,update } = useSession()
   const isUserAuthenticated = status === "authenticated"
   const username = data?.user?.name || "User"

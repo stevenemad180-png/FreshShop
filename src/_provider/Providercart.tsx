@@ -35,4 +35,5 @@ export function usecart() {
   const context = useContext(ContextCart)
   if (!context) throw new Error('usecart must be used within Providercart')
   return context
+  
 }
