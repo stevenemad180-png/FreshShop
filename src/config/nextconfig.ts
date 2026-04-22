@@ -10,18 +10,22 @@ export const authConfig: NextAuthConfig = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
+
       async authorize(credentials) {
         try {
-          const res = await fetch("https://ecommerce.routemisr.com/api/v1/auth/signin", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              email: credentials?.email,
-              password: credentials?.password,
-            }),
-          })
+          const res = await fetch(
+            "https://ecommerce.routemisr.com/api/v1/auth/signin",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                email: credentials?.email,
+                password: credentials?.password,
+              }),
+            }
+          )
 
           const finalres = await res.json()
           console.log("signin response", finalres)
@@ -48,7 +52,7 @@ export const authConfig: NextAuthConfig = {
   ],
 
   callbacks: {
-    jwt({ token, user }) {
+    async jwt({ token, user }) {
       if (user) {
         token.usertoken = user.tokennext
         token.id = user.id
@@ -56,11 +60,15 @@ export const authConfig: NextAuthConfig = {
       return token
     },
 
-    session({ session, token }) {
-      if (session.user) {
+    async session({ session, token }) {
+      if (session.user && token.id) {
         session.user.id = token.id
       }
-      session.usertoken = token.usertoken
+
+      if (token.usertoken) {
+        session.usertoken = token.usertoken
+      }
+
       return session
     },
   },
