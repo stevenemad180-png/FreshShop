@@ -5,13 +5,14 @@ import ProductdetailsLayout from "@/app/_Components/ProductdetailsLayout/Product
 export const dynamic = "force-dynamic"
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default async function Page({ params }: PageProps) {
-  const product = await GetDetailsSingleProduct(params.id)
+  const { id } = await params
+  const product = await GetDetailsSingleProduct(id)
 
   if (!product) {
     notFound()

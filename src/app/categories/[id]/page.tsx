@@ -5,13 +5,14 @@ import Link from 'next/link'
 export const dynamic = 'force-dynamic'
 
 interface CategoryPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
-  const category = await GetspecificCategories(params.id)
+  const { id } = await params
+  const category = await GetspecificCategories(id)
 
   if (!category) {
     return (
@@ -24,7 +25,6 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-gray-100 flex flex-col items-center justify-center px-4 py-16">
       <div className="max-w-sm w-full bg-white rounded-3xl shadow-2xl p-8 flex flex-col items-center">
-        
         <div className="relative w-48 h-48 rounded-full overflow-hidden shadow-lg mb-6">
           <Image
             src={category.image}
@@ -48,7 +48,6 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         >
           Back to Categories
         </Link>
-
       </div>
     </div>
   )
