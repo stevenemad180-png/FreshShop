@@ -1,53 +1,49 @@
-import { Getspecificbrand } from '@/api/serves/route'
+import { getallbrands } from '@/api/serves/route'
 import Image from 'next/image'
 import Link from 'next/link'
+import { BrandType } from '@/api/Types'
 
 export const dynamic = 'force-dynamic'
 
-interface BrandPageProps {
-  params: {
-    id: string
-  }
-}
+export default async function BrandsPage() {
+  const brands: BrandType[] = await getallbrands()
 
-export default async function BrandPage({ params }: BrandPageProps) {
-  const brand = await Getspecificbrand(params.id)
-
-  if (!brand) {
+  if (brands.length === 0) {
     return (
-      <div className="flex items-center justify-center h-screen text-gray-500 text-xl">
-        Brand Not Found 😔
+      <div className="text-center py-20 text-gray-500 text-lg">
+        No brands found 😔
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-gray-100 flex flex-col items-center justify-center px-4 py-16">
-      <div className="max-w-sm w-full bg-white rounded-3xl shadow-2xl p-8 flex flex-col items-center">
-        <div className="relative w-48 h-48 rounded-full overflow-hidden shadow-lg mb-6">
-          <Image
-            src={brand.image}
-            alt={brand.name}
-            fill
-            className="object-contain"
-          />
-        </div>
+    <section className="px-6 py-12 md:px-12 xl:px-24 bg-gray-50 min-h-screen">
+      <h1 className="mb-10 text-4xl font-extrabold text-gray-800 text-center">
+        Explore All Brands
+      </h1>
 
-        <h1 className="text-4xl font-extrabold text-gray-800 mb-2">
-          {brand.name}
-        </h1>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8">
+        {brands.map((brand) => (
+          <Link
+            key={brand._id}
+            href={`/brands/${brand._id}`}
+            className="flex flex-col items-center gap-4 rounded-3xl border border-gray-200 bg-white p-6 shadow-md transition-transform duration-300 hover:-translate-y-2 hover:shadow-xl"
+          >
+            <div className="relative h-28 w-28 overflow-hidden rounded-full bg-gray-100 shadow-inner">
+              <Image
+                src={brand.image}
+                alt={brand.name}
+                fill
+                className="object-contain"
+              />
+            </div>
 
-        <p className="text-gray-500 text-center mb-6">
-          Discover all products and collections of {brand.name}
-        </p>
-
-        <Link
-          href="/brands"
-          className="px-6 py-3 bg-emerald-600 text-white rounded-xl font-semibold text-lg hover:bg-emerald-700 transition"
-        >
-          Back to Brands
-        </Link>
+            <span className="text-lg font-semibold text-gray-900 text-center">
+              {brand.name}
+            </span>
+          </Link>
+        ))}
       </div>
-    </div>
+    </section>
   )
 }
