@@ -1,24 +1,22 @@
-import React from "react";
-import { GETWISHLIST } from "@/api/serves/route";
-import { ProductType, WishlistResponse } from "@/api/Types";
-import Image from "next/image";
-import HandleAddCard from "../_Components/HandleAddCard/HandleAddCard";
-import HandleButtonDeleteWishlist from "./HandleButtonDeleteWishlist";
-import { revalidatePath } from "next/cache";
+import React from "react"
+import { GETWISHLIST } from "@/api/serves/route"
+import { ProductType } from "@/api/Types"
+import Image from "next/image"
+import HandleAddCard from "../_Components/HandleAddCard/HandleAddCard"
+import HandleButtonDeleteWishlist from "./HandleButtonDeleteWishlist"
+
+export const dynamic = "force-dynamic"
 
 export default async function WishlistPage() {
-    const res: WishlistResponse | undefined = await GETWISHLIST();
-    
-    
-    const wishlist: ProductType[] = res?.data ?? [];
-    
+  const res = await GETWISHLIST()
+  const wishlist: ProductType[] = res?.data ?? []
 
-  if (!wishlist.length) {
+  if (wishlist.length === 0) {
     return (
       <div className="text-center py-20 text-slate-500">
         Your wishlist is empty 💔
       </div>
-    );
+    )
   }
 
   return (
@@ -44,17 +42,19 @@ export default async function WishlistPage() {
               <h3 className="text-sm font-semibold text-slate-800 mb-1 line-clamp-2">
                 {product.title}
               </h3>
+
               <p className="text-xs text-slate-500 mb-1">
                 {product.category?.name}
               </p>
+
               <span className="font-bold text-slate-900">
                 {product.priceAfterDiscount ?? product.price} EGP
               </span>
             </div>
 
             <div className="flex gap-2 mt-auto">
-              {/* Client Action Buttons */}
               <HandleButtonDeleteWishlist id={product._id} />
+
               <HandleAddCard
                 id={product._id}
                 className="flex-1 h-10 rounded-xl bg-emerald-600 text-white font-semibold transition hover:bg-emerald-700"
@@ -66,5 +66,5 @@ export default async function WishlistPage() {
         ))}
       </div>
     </section>
-  );
+  )
 }

@@ -1,191 +1,192 @@
-  import { decodetoken } from "@/app/utils"
-  import { CartResponse, CategoryType, ProductType, WishlistResponse } from "../Types"
-  import { revalidatePath } from "next/cache"
+import { decodetoken } from "@/app/utils"
+import {
+  CartResponse,
+  CategoryType,
+  ProductType,
+  WishlistResponse,
+  BrandType,
+} from "../Types"
+import { revalidatePath } from "next/cache"
 
-  export async function getallproduct(): Promise<ProductType[] | undefined> {
-    
-      try {
-        const res = await fetch(`https://ecommerce.routemisr.com/api/v1/products`, {
-                  cache:"reload"
+const BASE_URL = "https://ecommerce.routemisr.com/api/v1"
+const BASE_URL_V2 = "https://ecommerce.routemisr.com/api/v2"
 
-        
-        })
-        
-          const finalresult = await res.json()
-          
-          // console.log(finalresult.data) 
-      
-          return finalresult.data
-      } catch (error) {
-          console.log(error)
-    }
-    
-  }
-
-
-  export async function GetDetailsSingleProduct(id: string)  {
-      try {
-          const res = await fetch(`https://ecommerce.routemisr.com/api/v1/products/${id}`)
-          const finalresult = await res.json()
-      
-          // console.log(finalresult.data)
-      
-          return finalresult.data
-      } catch (error) {
-        console.log(error)
-        return undefined
-      }
-  }
-    
-
-  export async function CategoriesItems(): Promise<CategoryType[] | undefined> {
-    try {
-      const res = await fetch(
-        `https://ecommerce.routemisr.com/api/v1/categories`
-      );
-
-      const finalresult = await res.json();
-
-      // console.log(finalresult.data);
-
-      return finalresult.data;
-    } catch (error) {
-      console.log(error);
-      return undefined;
-    }
-  }
-export async function GETCART(): Promise<CartResponse | undefined> {
+export async function getallproduct(): Promise<ProductType[]> {
   try {
-    const usertoken = await decodetoken();
-
-    if (!usertoken) {
-      return undefined;
-    }
-
-    const res = await fetch(`https://ecommerce.routemisr.com/api/v2/cart`, {
-      headers: { token: usertoken },
+    const res = await fetch(`${BASE_URL}/products`, {
       cache: "no-store",
-    });
+    })
 
     if (!res.ok) {
-      return undefined;
+      return []
     }
 
-    const finalresult: CartResponse = await res.json();
-    return finalresult;
+    const finalresult = await res.json()
+    return finalresult?.data ?? []
   } catch (error) {
-    console.log(error);
-    return undefined;
+    console.log("getallproduct error:", error)
+    return []
   }
 }
 
-export async function GETWISHLIST(): Promise<WishlistResponse | undefined> {
+export async function GetDetailsSingleProduct(
+  id: string
+): Promise<ProductType | null> {
   try {
-    const usertoken = await decodetoken();
-
-    if (!usertoken) {
-      return undefined;
-    }
-
-    const res = await fetch(`https://ecommerce.routemisr.com/api/v1/wishlist`, {
-      headers: { token: usertoken },
+    const res = await fetch(`${BASE_URL}/products/${id}`, {
       cache: "no-store",
-    });
+    })
 
     if (!res.ok) {
-      return undefined;
+      return null
     }
 
-    const finalresult: WishlistResponse = await res.json();
-    return finalresult;
+    const finalresult = await res.json()
+    return finalresult?.data ?? null
   } catch (error) {
-    console.log(error);
-    return undefined;
+    console.log("GetDetailsSingleProduct error:", error)
+    return null
   }
 }
 
-  export async function getallbrands() {
-    
-      try {
-        const res = await fetch(`https://ecommerce.routemisr.com/api/v1/brands`, {
-                  cache:"reload"
+export async function CategoriesItems(): Promise<CategoryType[]> {
+  try {
+    const res = await fetch(`${BASE_URL}/categories`, {
+      cache: "no-store",
+    })
 
-        
-        })
-        
-          const finalresult = await res.json()
-          
-          // console.log(finalresult.data) 
-      
-          return finalresult.data
-      } catch (error) {
-          console.log(error)
+    if (!res.ok) {
+      return []
     }
-    
-  }
 
-  export async function Getspecificbrand(id: string) {
-    try {
-      const res = await fetch(`https://ecommerce.routemisr.com/api/v1/brands/${id}`)
-      const finalresult = await res.json()
-      
-      console.log(finalresult.data)
-      
-      return finalresult.data
-        
-    } catch (error) {
-      console.log(error)
-      return undefined
+    const finalresult = await res.json()
+    return finalresult?.data ?? []
+  } catch (error) {
+    console.log("CategoriesItems error:", error)
+    return []
+  }
+}
+
+export async function GETCART(): Promise<CartResponse | null> {
+  try {
+    const usertoken = await decodetoken()
+
+    if (!usertoken) {
+      return null
     }
-  }
 
+    const res = await fetch(`${BASE_URL_V2}/cart`, {
+      headers: { token: usertoken },
+      cache: "no-store",
+    })
 
-
-  export async function getallCategories() {
-    
-      try {
-        const res = await fetch(`https://ecommerce.routemisr.com/api/v1/categories`, {
-          cache:"force-cache"
-        
-        })
-        
-          const finalresult = await res.json()
-          
-          // console.log(finalresult.data) 
-      
-          return finalresult.data
-      } catch (error) {
-          console.log(error)
+    if (!res.ok) {
+      return null
     }
-    
+
+    const finalresult: CartResponse = await res.json()
+    return finalresult
+  } catch (error) {
+    console.log("GETCART error:", error)
+    return null
   }
+}
 
+export async function GETWISHLIST(): Promise<WishlistResponse | null> {
+  try {
+    const usertoken = await decodetoken()
 
-  export async function GetspecificCategories(id: string) {
-    try {
-      const usertoken = await decodetoken();
-
-      if (!usertoken) {
-        console.error("User token missing");
-        return null;
-      }
-
-      const res = await fetch(`https://ecommerce.routemisr.com/api/v1/categories/${id}`, {
-        headers: { token: usertoken },
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        console.error("API error:", errorData?.message || res.statusText);
-        return null;
-      }
-
-      const finalresult = await res.json();
-      console.log("GetspecificCategories:", finalresult.data);
-
-      return finalresult.data;
-    } catch (error) {
-      console.error("GetspecificCategories error:", error);
-      return null;
+    if (!usertoken) {
+      return null
     }
+
+    const res = await fetch(`${BASE_URL}/wishlist`, {
+      headers: { token: usertoken },
+      cache: "no-store",
+    })
+
+    if (!res.ok) {
+      return null
+    }
+
+    const finalresult: WishlistResponse = await res.json()
+    return finalresult
+  } catch (error) {
+    console.log("GETWISHLIST error:", error)
+    return null
   }
+}
+
+export async function getallbrands(): Promise<BrandType[]> {
+  try {
+    const res = await fetch(`${BASE_URL}/brands`, {
+      cache: "no-store",
+    })
+
+    if (!res.ok) {
+      return []
+    }
+
+    const data = await res.json()
+    return data?.data ?? []
+  } catch (error) {
+    console.error("getallbrands error:", error)
+    return []
+  }
+}
+
+export async function Getspecificbrand(id: string): Promise<BrandType | null> {
+  try {
+    const res = await fetch(`${BASE_URL}/brands/${id}`, {
+      cache: "no-store",
+    })
+
+    if (!res.ok) {
+      return null
+    }
+
+    const finalresult = await res.json()
+    return finalresult?.data ?? null
+  } catch (error) {
+    console.log("Getspecificbrand error:", error)
+    return null
+  }
+}
+
+export async function getallCategories(): Promise<CategoryType[]> {
+  try {
+    const res = await fetch(`${BASE_URL}/categories`, {
+      cache: "no-store",
+    })
+
+    if (!res.ok) {
+      return []
+    }
+
+    const finalresult = await res.json()
+    return finalresult?.data ?? []
+  } catch (error) {
+    console.log("getallCategories error:", error)
+    return []
+  }
+}
+
+export async function GetspecificCategories(
+  id: string
+): Promise<CategoryType | null> {
+  try {
+    const res = await fetch(`${BASE_URL}/categories/${id}`, {
+      cache: "no-store",
+    })
+
+    if (!res.ok) {
+      return null
+    }
+
+    const finalresult = await res.json()
+    return finalresult?.data ?? null
+  } catch (error) {
+    console.error("GetspecificCategories error:", error)
+    return null
+  }
+}
