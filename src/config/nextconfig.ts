@@ -1,7 +1,7 @@
-import { signIn } from 'next-auth/react';
 import type { NextAuthConfig } from "next-auth"
 import Credentials from "next-auth/providers/credentials"
-import { jwtDecode} from 'jwt-decode'
+import { jwtDecode } from 'jwt-decode'
+
 export const authConfig: NextAuthConfig = {
   providers: [
     Credentials({
@@ -9,83 +9,66 @@ export const authConfig: NextAuthConfig = {
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
-        
       },
       async authorize(credentials) {
-        const res = await fetch("https://ecommerce.routemisr.com/api/v1/auth/signin", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-          
-            email: credentials?.email,
-            password: credentials?.password,
-          }),
-         
-        })
+        try {
+          const res = await fetch("https://ecommerce.routemisr.com/api/v1/auth/signin", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: credentials?.email,
+              password: credentials?.password,
+            }),
+          })
 
-        const finalres = await res.json()
-        console.log("signin response", finalres)
-        if (res.ok)
-        {
-          
+          const finalres = await res.json()
+          console.log("signin response", finalres)
+
+          if (!res.ok || finalres.message !== 'success') {
+            return null
+          }
+
           const { name, email } = finalres.user
-          const data:{id:string}=jwtDecode(finalres.token)
+          const data: { id: string } = jwtDecode(finalres.token)
+
           return {
             name,
             email,
             id: data.id,
-           tokennext: finalres.token,
+            tokennext: finalres.token,
           }
 
+        } catch (error) {
+          console.error('Auth fetch error:', error)
+          return null
         }
-
-
-        
       },
-      
     }),
-    
   ],
+
   callbacks: {
-
-    // signIn - refresh ----getseetion
-    jwt: function (param)
-    {
+    jwt: function (param) {
       if (param.user) {
-        console.log('jwparambefore',param)
-        param.token.usertoken = param.user.tokennext;
+        console.log('jwparambefore', param)
+        param.token.usertoken = param.user.tokennext
         param.token.id = param.user.id
-                console.log('jwparam',param)
-
+        console.log('jwparam', param)
       }
       return param.token
-
-
-
-
-
-
     },
-    //if user aurhcaited or no  => client side
-    //use session .....api/auth/session    .... getserver session
-    //edit obj add id 
+
     session: function (param) {
-             console.log('param session before', param)
-
-      param.session.user.id=param.token.id
+      console.log('param session before', param)
+      param.session.user.id = param.token.id
       console.log('param session', param)
-      
       return param.session
-      
     },
-},
+  },
 
- 
-    pages: {
-      signIn: "/login",
-    },
-
-
+  pages: {
+    signIn: "/login",
+  },
 }
+// 
