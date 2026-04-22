@@ -1,6 +1,6 @@
 import type { NextAuthConfig } from "next-auth"
 import Credentials from "next-auth/providers/credentials"
-import { jwtDecode } from 'jwt-decode'
+import { jwtDecode } from "jwt-decode"
 
 export const authConfig: NextAuthConfig = {
   providers: [
@@ -26,7 +26,7 @@ export const authConfig: NextAuthConfig = {
           const finalres = await res.json()
           console.log("signin response", finalres)
 
-          if (!res.ok || finalres.message !== 'success') {
+          if (!res.ok || finalres.message !== "success") {
             return null
           }
 
@@ -34,14 +34,13 @@ export const authConfig: NextAuthConfig = {
           const data: { id: string } = jwtDecode(finalres.token)
 
           return {
+            id: data.id,
             name,
             email,
-            id: data.id,
             tokennext: finalres.token,
           }
-
         } catch (error) {
-          console.error('Auth fetch error:', error)
+          console.error("Auth fetch error:", error)
           return null
         }
       },
@@ -49,21 +48,20 @@ export const authConfig: NextAuthConfig = {
   ],
 
   callbacks: {
-    jwt: function (param) {
-      if (param.user) {
-        console.log('jwparambefore', param)
-        param.token.usertoken = param.user.tokennext
-        param.token.id = param.user.id
-        console.log('jwparam', param)
+    jwt({ token, user }) {
+      if (user) {
+        token.usertoken = user.tokennext
+        token.id = user.id
       }
-      return param.token
+      return token
     },
 
-    session: function (param) {
-      console.log('param session before', param)
-      param.session.user.id = param.token.id
-      console.log('param session', param)
-      return param.session
+    session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id
+      }
+      session.usertoken = token.usertoken
+      return session
     },
   },
 
@@ -71,4 +69,3 @@ export const authConfig: NextAuthConfig = {
     signIn: "/login",
   },
 }
-// 
