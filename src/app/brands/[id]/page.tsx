@@ -5,13 +5,14 @@ import Link from 'next/link'
 export const dynamic = 'force-dynamic'
 
 interface BrandPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default async function BrandPage({ params }: BrandPageProps) {
-  const brand = await Getspecificbrand(params.id)
+  const { id } = await params
+  const brand = await Getspecificbrand(id)
 
   if (!brand) {
     return (
