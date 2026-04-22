@@ -1,25 +1,28 @@
-import { getallproduct } from "@/api/serves/route"
-import ProductCard from "./_Components/ProductCard/ProductCard"
-import img1 from "@/images/blog-img-1.jpeg"
-import img2 from "@/images/blog-img-2.jpeg"
-import img3 from "@/images/banner-4.jpeg"
-import Myswiper from "./_Components/Myswiper/Myswiper"
-import { lazy, Suspense } from "react"
-import { BeatLoader } from "react-spinners"
+import { getallproduct } from "@/api/serves/route";
+import ProductCard from "./_Components/ProductCard/ProductCard";
+import Myswiper from "./_Components/Myswiper/Myswiper";
+import { lazy, Suspense } from "react";
+import { BeatLoader } from "react-spinners";
 
-const LazyCategoriesSubpart = lazy(
-  () => import("./_Components/CategoriesSubpart/CategoriesSubpart")
-)
+const LazyCategoriesSubpart = lazy(() =>
+  import("./_Components/CategoriesSubpart/CategoriesSubpart")
+);
 
-export const dynamic = "force-dynamic"
+export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const allproducts = await getallproduct()
+  const allproducts = await getallproduct();
 
   return (
     <>
       <div className="p-10 m-3">
-        <Myswiper imglist={[img1.src, img2.src, img3.src]} />
+        <Myswiper
+          imglist={[
+            "/images/blog-img-1.jpeg",
+            "/images/blog-img-2.jpeg",
+            "/images/banner-4.jpeg",
+          ]}
+        />
       </div>
 
       <Suspense fallback={<BeatLoader />}>
@@ -47,5 +50,5 @@ export default async function Home() {
         )}
       </section>
     </>
-  )
+  );
 }
