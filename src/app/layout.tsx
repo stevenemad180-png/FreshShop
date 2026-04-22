@@ -8,24 +8,19 @@ import SessionProviderwell from "./_Components/sessionprovider/SessionProviderwe
 import Providercart from "@/_provider/Providercart";
 import { GETCART, GETWISHLIST } from "@/api/serves/route";
 import { CartResponse, WishlistResponse } from "@/api/Types";
-import Footer from "./_Components/Footer/Footer";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
-export const dynamic = "force-dynamic";    
+
 export const metadata: Metadata = {
   title: "FreshCart",
   description: "Modern Grocery Store",
-  icons: {
-    icon: "/icon.svg",
-    shortcut: "/icon.svg",
-    apple: "/icon.svg",
-  },
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-const cart = await GETCART();
-const wishlist = await GETWISHLIST();
+  const cart: CartResponse = await GETCART();
+  const wishlist: WishlistResponse = await GETWISHLIST();
+
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
@@ -35,7 +30,6 @@ const wishlist = await GETWISHLIST();
             <Mynav />
             <Toaster richColors position="top-center" />
             {children}
-            <Footer/>   
           </SessionProviderwell>
         </Providercart>
       </body>
